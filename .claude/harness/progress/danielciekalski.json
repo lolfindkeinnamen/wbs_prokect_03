@@ -9,6 +9,15 @@
       "commits": [
         "d096d663b9a584ae6fc5a01b0c6658df56e23d0b"
       ]
+    },
+    {
+      "task": "FR012",
+      "at": "2026-11-17T15:24:05.048Z",
+      "route": "written",
+      "branch": "FR012-add-favourites",
+      "commits": [
+        "1960a972f00c4f528742c5d78180d67f78e9940b"
+      ]
     }
   ]
 }
