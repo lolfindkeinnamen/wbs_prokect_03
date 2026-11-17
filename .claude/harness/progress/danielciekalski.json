@@ -1,0 +1,14 @@
+{
+  "student": "danielciekalski",
+  "unlocks": [
+    {
+      "task": "FR011",
+      "at": "2026-11-17T12:13:57.303Z",
+      "route": "written",
+      "branch": "FR011-pokemon-cards",
+      "commits": [
+        "d096d663b9a584ae6fc5a01b0c6658df56e23d0b"
+      ]
+    }
+  ]
+}
