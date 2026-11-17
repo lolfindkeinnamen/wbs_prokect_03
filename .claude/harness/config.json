@@ -74,20 +74,20 @@
     },
     {
       "id": "FR015",
-      "title": "Journal page display",
-      "file": "journal.js",
+      "title": "pokedex page display",
+      "file": "pokedex.js",
       "categories": ["localStorage", "dom"]
     },
     {
       "id": "FR016",
       "title": "Personal notes",
-      "file": "journal.js",
+      "file": "pokedex.js",
       "categories": ["localStorage", "dom"]
     },
     {
       "id": "FR017",
-      "title": "Remove a film from the journal",
-      "file": "journal.js",
+      "title": "Remove a film from the pokedex",
+      "file": "pokedex.js",
       "categories": ["localStorage", "dom"]
     },
     {
@@ -110,8 +110,8 @@
     },
     {
       "id": "FR021",
-      "title": "Convert journal page to ES modules",
-      "file": "src/journal.js",
+      "title": "Convert pokedex page to ES modules",
+      "file": "src/pokedex.js",
       "categories": ["esModules"]
     },
     {
@@ -122,8 +122,8 @@
     },
     {
       "id": "FR023",
-      "title": "Refactor journal page for readability",
-      "file": "src/journal.js",
+      "title": "Refactor pokedex page for readability",
+      "file": "src/pokedex.js",
       "categories": []
     }
   ]
