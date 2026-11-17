@@ -73,8 +73,23 @@ function createCard(pokemon) {
     pokeType.textContent = pokemon.types.join(', ')
     pokeCard.appendChild(pokeType)
 
-    return pokeCard;
+    // ─── FR012 · Add to favourites ───────────────────────────────────────────────
+    // An "add to favourites" button. The movie is stored as an object, in an array,
+    // in localStorage — the Journal page reads it back out from there.
 
+    const favButton = document.createElement("button")
+    favButton.addEventListener('click', () => {
+        const favPoke = { ...pokemon, note: '' }
+        const saveFavList = JSON.parse(localStorage.getItem('pokedexFavorites')) || [];
+        const newFavEntry = [favPoke, ...saveFavList];
+        localStorage.setItem("pokedexFavorites", JSON.stringify(newFavEntry));
+    });
+
+    favButton.className = "favourite-button";
+    favButton.textContent = "Zu Favoriten"
+    pokeCard.appendChild(favButton);
+
+    return pokeCard;
 }
 
 dummyPokemon.forEach((pokemon) => {
@@ -85,12 +100,6 @@ dummyPokemon.forEach((pokemon) => {
 
 
 
-
-
-
-// ─── FR012 · Add to favourites ───────────────────────────────────────────────
-// An "add to favourites" button. The movie is stored as an object, in an array,
-// in localStorage — the Journal page reads it back out from there.
 
 
 
