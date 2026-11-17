@@ -1,9 +1,9 @@
-// journal.js — Journal page
+// pokedex.js — pokedex page
 //
 // Yours to type, same as main.js. The markers are landmarks, not structure.
 
 
-// ─── FR015 · Journal page display ────────────────────────────────────────────
+// ─── FR015 · pokedex page display ────────────────────────────────────────────
 // Read the favourites back out of localStorage and list them: image, title,
 // info. Think about what this page should say when there aren't any yet.
 
@@ -19,5 +19,5 @@
 
 
 // ─── FR017 · Remove a film ────────────────────────────────────────────────────
-// Take a film back out of the journal. It stays gone after a reload, and the
+// Take a film back out of the pokedex. It stays gone after a reload, and the
 // page still works once the last one is removed.

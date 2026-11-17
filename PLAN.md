@@ -22,21 +22,42 @@ Frank - fraendk@hotmail.com
 Daniel - danielciekalski@gmail.com
 Dustin - dustin.jabs98@icloud.com
 
+1. landing page (FR008, die search bar aus fr010, fr013)
+2. die pokedex cards  (fr011, fr012, fr014)
+3. Data fetch (fr009, die search results aus fr010)
+4. favorite funktion ( fr015, fr016, fr017)
+
 Tasks:
-// FR001 :
-// FR002 :
-// FR003 :
-// FR004 :
-// FR005 :
-// FR006 :
-FR007 :
-FR008 :
-FR009 :
-FR010 :
-FR011 :
-FR012 :
-FR013 :
-FR014 :
-FR015 :
-FR016 :
-FR017 :
+// FR001 : nichts zu tun
+// FR002 : nichts zu tun
+// FR003 : nichts zu tun
+// FR004 : nichts zu tun
+// FR005 : nichts zu tun
+// FR006 : nichts zu tun 
+FR007 : Dustin
+FR008 : Frank
+FR009 : Dustin
+FR010 : Frank
+FR011 : Daniel
+FR012 : Daniel
+FR013 : Frank
+FR014 : Daniel
+FR015 : Lennart
+FR016 : Lennart
+FR017 : Lennart
+
+Dummy Data to be used: 
+const dummyPokemon = [
+  {
+    id: 25,
+    name: 'pikachu',
+    image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png',
+    types: ['electric']
+  },
+  {
+    id: 1,
+    name: 'bulbasaur',
+    image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
+    types: ['grass', 'poison']
+  }
+];
