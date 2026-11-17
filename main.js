@@ -29,6 +29,60 @@
 
 // ─── FR011 · Movie cards ─────────────────────────────────────────────────────
 // One card per movie: image, title, and enough info to be worth looking at.
+const container = document.querySelector('#pokemon-list')
+
+
+const dummyPokemon = [
+    {
+        id: 25,
+        name: 'pikachu',
+        image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png',
+        types: ['electric']
+    },
+    {
+        id: 1,
+        name: 'bulbasaur',
+        image: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png',
+        types: ['grass', 'poison']
+    }
+];
+
+function createCard(pokemon) {
+
+    const pokeCard = document.createElement('article')
+    pokeCard.className = 'pokemon-card';
+
+    const pokeName = document.createElement('h2')
+    pokeName.className = 'poke-name'
+    pokeName.textContent = pokemon.name
+    pokeCard.appendChild(pokeName)
+
+    const pokeImage = document.createElement("img")
+    pokeImage.className = "poke-image";
+    pokeImage.alt = pokemon.name
+    pokeImage.src = pokemon.image
+    pokeCard.appendChild(pokeImage);
+
+    const pokeID = document.createElement("p")
+    pokeID.className = "poke-ID"
+    pokeID.textContent = "#" + pokemon.id
+    pokeCard.appendChild(pokeID)
+
+    const pokeType = document.createElement("p")
+    pokeType.className = "poke-type"
+    pokeType.textContent = pokemon.types.join(', ')
+    pokeCard.appendChild(pokeType)
+
+    return pokeCard;
+
+}
+
+dummyPokemon.forEach((pokemon) => {
+
+    container.appendChild(createCard(pokemon))
+
+});
+
 
 
 
