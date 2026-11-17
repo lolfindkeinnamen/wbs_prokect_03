@@ -61,3 +61,4 @@ const dummyPokemon = [
     types: ['grass', 'poison']
   }
 ];
+Favorit = Dummy-Format + note: '' · localStorage-Key: 'pokedexFavorites' · wiedererkennen über id
