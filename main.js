@@ -15,7 +15,15 @@
 // ─── FR009 · Fetch popular movies ────────────────────────────────────────────
 // Fetch the popular movies from TMDB and show them on this page.
 
+async function getPokeData() {
+    const response = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=20")
+    
+    let result = await response.json()
 
+    console.log(result.results)
+}
+
+getPokeData()
 
 
 
