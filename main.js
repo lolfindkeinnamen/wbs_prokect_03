@@ -1,4 +1,4 @@
-// main.js — Homepage
+
 //
 // This file is yours to type. The section markers below are landmarks and
 // nothing else: they name each requirement so that the brief, your GitHub
@@ -22,9 +22,17 @@
 // ─── FR010 · Search with dialog ──────────────────────────────────────────────
 // A search bar. On submit, show the results — or a "nothing found" message — in
 // a <dialog>.
-
-
-
+const searchForm = document.querySelector("#search-form");
+const searchInput = document.querySelector("#search-input");
+const searchDialog = document.querySelector("#search-dialog");
+const searchResults = document.querySelector("#search-results");
+searchForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+  const query = searchInput.value .trim();
+  if (query === ""){searchResults.textContent ="Bitte gib einen Pokémon-Namen ein."}else {searchResults.textContent = query;}
+  console.log(query);
+  searchDialog.showModal();
+});
 
 
 // ─── FR011 · Movie cards ─────────────────────────────────────────────────────
