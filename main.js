@@ -20,7 +20,23 @@ async function getPokeData() {
     
     let result = await response.json()
 
-    console.log(result.results)
+    result.results.forEach((pokemon) => {
+        const link = pokemon.url
+        const pokemonID = link.split("/").at(-2)
+        console.log(pokemonID)
+        const pokemonPicture = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + pokemonID + ".png"
+        console.log(pokemonPicture)
+
+        const card = {
+            id: pokemonID,
+            image: pokemonPicture,
+            name: pokemon.name,
+            types: [],
+        }
+        
+        container.appendChild(createCard(card))
+        
+    })
 }
 
 getPokeData()
