@@ -25,36 +25,26 @@ async function getAndShowFirstTwentyPokemon() {
 async function getFirstTwentyPokemon() {
     const response = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=20")
     let result = await response.json()
-
     return(result)
 }
 
 
 async function mapPokemonInCard(result) {
-
     const cards = await Promise.all(result.results.map(async (pokemon) => {
-        
         const link = pokemon.url
         const pokemonID = link.split("/").at(-2)
         const pokemonPicture = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + pokemonID + ".png"
-       
-
         const detailResponse = await fetch(link)
         const detail = await detailResponse.json()
-
         const card = {
             id: pokemonID,
             image: pokemonPicture,
             name: pokemon.name,
             types: detail.types.map((entry) => entry.type.name),
         }
-        
         return(card)
-        
     }))
-
     return(cards)
-    
 }
 
 
@@ -62,8 +52,9 @@ async function showPokemonCards(cards) {
     cards.forEach((card) => {
         container.appendChild(createCard(card))
     })
-
 }
+
+
 
 getAndShowFirstTwentyPokemon()
 
