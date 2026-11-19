@@ -16,6 +16,48 @@
 // Fetch the popular movies from TMDB and show them on this page.
 
 
+async function getAndShowFirstTwentyPokemon() {
+    let result = await getFirstTwentyPokemon()
+    let cards = await mapPokemonInCard(result)
+    showPokemonCards(cards)
+}
+
+async function getFirstTwentyPokemon() {
+    const response = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=20")
+    let result = await response.json()
+    return(result)
+}
+
+
+async function mapPokemonInCard(result) {
+    const cards = await Promise.all(result.results.map(async (pokemon) => {
+        const link = pokemon.url
+        const pokemonID = link.split("/").at(-2)
+        const pokemonPicture = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + pokemonID + ".png"
+        const detailResponse = await fetch(link)
+        const detail = await detailResponse.json()
+        const card = {
+            id: pokemonID,
+            image: pokemonPicture,
+            name: pokemon.name,
+            types: detail.types.map((entry) => entry.type.name),
+        }
+        return(card)
+    }))
+    return(cards)
+}
+
+
+async function showPokemonCards(cards) {
+    cards.forEach((card) => {
+        container.appendChild(createCard(card))
+    })
+}
+
+
+
+getAndShowFirstTwentyPokemon()
+
 
 
 
@@ -26,11 +68,43 @@ const searchForm = document.querySelector("#search-form");
 const searchInput = document.querySelector("#search-input");
 const searchDialog = document.querySelector("#search-dialog");
 const searchResults = document.querySelector("#search-results");
-searchForm.addEventListener("submit", function(event) {
+
+/**
+ * Looks up one Pokémon by its exact name.
+ * Returns a card object in the shape createCard expects,
+ * or null when the API has no Pokémon with that name (404).
+ */
+async function searchPokemonByName(name) {
+  const response = await fetch("https://pokeapi.co/api/v2/pokemon/" + encodeURIComponent(name));
+  if (response.status === 404) {
+    return null;
+  }
+  const detail = await response.json();
+  return {
+    id: detail.id,
+    image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + detail.id + ".png",
+    name: detail.name,
+    types: detail.types.map((entry) => entry.type.name),
+  };
+}
+
+searchForm.addEventListener("submit", async function(event) {
   event.preventDefault();
-  const query = searchInput.value .trim();
-  if (query === ""){searchResults.textContent ="Bitte gib einen Pokémon-Namen ein."}else {searchResults.textContent = query;}
-  console.log(query);
+  // The API only knows lowercase names, so "Pikachu" is turned into "pikachu".
+  const query = searchInput.value.trim().toLowerCase();
+  // Empty the field so the next search starts fresh instead of appending to the old name.
+  searchInput.value = "";
+  searchResults.textContent = "";
+  if (query === "") {
+    searchResults.textContent = "Bitte gib einen Pokémon-Namen ein.";
+  } else {
+    const pokemon = await searchPokemonByName(query);
+    if (pokemon === null) {
+      searchResults.textContent = "Kein Pokémon mit diesem Namen gefunden.";
+    } else {
+      searchResults.appendChild(createCard(pokemon));
+    }
+  }
   searchDialog.showModal();
 });
 
@@ -81,6 +155,10 @@ function createCard(pokemon) {
     pokeType.textContent = pokemon.types.join(', ')
     pokeCard.appendChild(pokeType)
 
+    const checkFav = JSON.parse(localStorage.getItem('pokedexFavorites')) || [];
+    const isFav = checkFav.some((fav) => fav.id === pokemon.id);
+    let favStatus = isFav ? '⭐ bereits Favorit' : 'zu Favoriten';
+
     // ─── FR012 · Add to favourites ───────────────────────────────────────────────
     // An "add to favourites" button. The movie is stored as an object, in an array,
     // in localStorage — the Journal page reads it back out from there.
@@ -89,13 +167,22 @@ function createCard(pokemon) {
     favButton.addEventListener('click', () => {
         const favPoke = { ...pokemon, note: '' }
         const saveFavList = JSON.parse(localStorage.getItem('pokedexFavorites')) || [];
-        const newFavEntry = [favPoke, ...saveFavList];
-        localStorage.setItem("pokedexFavorites", JSON.stringify(newFavEntry));
+        const alreadyFavTest = saveFavList.some((alreadyFav) => alreadyFav.id === pokemon.id);
+        if (alreadyFavTest) {
+            const notInFavList = saveFavList.filter((fav) => fav.id !== pokemon.id);
+            localStorage.setItem("pokedexFavorites", JSON.stringify(notInFavList));
+            favButton.textContent = 'zu Favoriten';
+
+        } else {
+            const newFavEntry = [favPoke, ...saveFavList];
+            localStorage.setItem("pokedexFavorites", JSON.stringify(newFavEntry));
+            favButton.textContent = '⭐ bereits Favorit';
+        }
         renderFavorites();
-    });
+});
 
     favButton.className = "favourite-button";
-    favButton.textContent = "Zu Favoriten"
+    favButton.textContent = favStatus
     pokeCard.appendChild(favButton);
 
     return pokeCard;
