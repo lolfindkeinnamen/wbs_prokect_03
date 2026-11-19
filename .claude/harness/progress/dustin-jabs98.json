@@ -1,0 +1,17 @@
+{
+  "student": "dustin-jabs98",
+  "unlocks": [
+    {
+      "task": "FR009",
+      "at": "2026-11-17T13:43:20.305Z",
+      "route": "written",
+      "branch": "fr009-fetch-popular",
+      "commits": [
+        "026c8098bb605c8e36c22fa4ddf61b35841d05b0",
+        "45f635abbc66ed6baa2406184554d2e49a6ff4db",
+        "7cb3267a8616c2cf2adf89afcd196fc95d202618",
+        "d096d663b9a584ae6fc5a01b0c6658df56e23d0b"
+      ]
+    }
+  ]
+}
