@@ -323,7 +323,20 @@ const typeColors = {
   grass: 'bg-green-300 text-green-900',
   poison: 'bg-purple-300 text-purple-900',
   fire: 'bg-orange-300 text-orange-900',
-  water: 'bg-blue-300 text-blue-900'
+  water: 'bg-blue-300 text-blue-900',
+  normal: 'bg-neutral-300 text-neutral-900',
+  ice: 'bg-cyan-300 text-cyan-900',
+  fighting: 'bg-red-300 text-red-900',
+  ground: 'bg-amber-300 text-amber-900',
+  flying: 'bg-sky-300 text-sky-900',
+  psychic: 'bg-pink-300 text-pink-900',
+  bug: 'bg-lime-300 text-lime-900',
+  rock: 'bg-stone-300 text-stone-900',
+  ghost: 'bg-violet-300 text-violet-900',
+  dragon: 'bg-indigo-300 text-indigo-900',
+  dark: 'bg-slate-400 text-slate-900',
+  steel: 'bg-zinc-300 text-zinc-900',
+  fairy: 'bg-rose-300 text-rose-900'
 };
 
 function updateFavoritesInfo(count) {
