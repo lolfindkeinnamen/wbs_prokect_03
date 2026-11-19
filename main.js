@@ -137,31 +137,81 @@ const dummyPokemon = [
     }
 ];
 
+// Kartenhintergrund je nach erstem Typ. Die Klassen stehen bewusst ausgeschrieben da:
+// Sobald Tailwind als Build-Schritt läuft (Woche 2), erzeugt es nur Klassen, die es
+// wörtlich im Code findet. Zusammengesetzte Namen wie `from-${farbe}-100` gingen dann verloren.
+const typeGradients = {
+    normal: 'from-stone-100 to-stone-300',
+    fire: 'from-orange-100 to-red-400',
+    water: 'from-sky-100 to-blue-400',
+    electric: 'from-yellow-100 to-yellow-400',
+    grass: 'from-green-100 to-green-400',
+    ice: 'from-cyan-50 to-cyan-300',
+    fighting: 'from-red-100 to-rose-400',
+    poison: 'from-purple-100 to-purple-400',
+    ground: 'from-amber-100 to-amber-400',
+    flying: 'from-indigo-100 to-sky-300',
+    psychic: 'from-pink-100 to-pink-400',
+    bug: 'from-lime-100 to-lime-400',
+    rock: 'from-yellow-100 to-stone-400',
+    ghost: 'from-violet-200 to-indigo-400',
+    dragon: 'from-indigo-100 to-violet-400',
+    dark: 'from-stone-200 to-stone-400',
+    steel: 'from-slate-100 to-slate-300',
+    fairy: 'from-pink-50 to-rose-300'
+};
+
 function createCard(pokemon) {
 
+    // 25 → "025". String(), weil die ID je nach Quelle als Zahl oder als Text kommt.
+    const paddedId = String(pokemon.id).padStart(3, '0')
+    const gradient = typeGradients[pokemon.types[0]] || 'from-gray-100 to-gray-300'
+
+    // Außenrahmen: dicker dunkler Rand. "group" lässt den Glanzstreifen auf Hover der Karte reagieren.
     const pokeCard = document.createElement('article')
-    pokeCard.className = 'pokemon-card';
+    pokeCard.className = 'pokemon-card group relative w-64 overflow-hidden rounded-2xl border-8 border-slate-800 bg-slate-800 shadow-md transition duration-300 hover:-translate-y-1 hover:rotate-1 hover:shadow-xl';
+
+    // Innere Fläche: dünne helle Linie + Farbverlauf
+    const cardFace = document.createElement('div')
+    cardFace.className = `flex h-full flex-col gap-3 rounded-lg border-2 border-white/70 bg-linear-to-b ${gradient} p-3`
+    pokeCard.appendChild(cardFace)
+
+    // Kopfzeile: Name links, ID rechts
+    const cardHeader = document.createElement('div')
+    cardHeader.className = 'flex items-baseline justify-between gap-2'
+    cardFace.appendChild(cardHeader)
 
     const pokeName = document.createElement('h2')
-    pokeName.className = 'poke-name'
+    pokeName.className = 'poke-name min-w-0 truncate text-xl font-bold capitalize text-slate-900'
     pokeName.textContent = pokemon.name
-    pokeCard.appendChild(pokeName)
-
-    const pokeImage = document.createElement("img")
-    pokeImage.className = "poke-image";
-    pokeImage.alt = pokemon.name
-    pokeImage.src = pokemon.image
-    pokeCard.appendChild(pokeImage);
+    cardHeader.appendChild(pokeName)
 
     const pokeID = document.createElement("p")
-    pokeID.className = "poke-ID"
-    pokeID.textContent = "#" + pokemon.id
-    pokeCard.appendChild(pokeID)
+    pokeID.className = "poke-ID shrink-0 font-mono text-sm font-bold text-slate-700"
+    pokeID.textContent = "#" + paddedId
+    cardHeader.appendChild(pokeID)
 
+    // Bildfenster: hell, eingerahmt, Innenschatten
+    const imageWindow = document.createElement('div')
+    imageWindow.className = 'flex justify-center rounded-lg border-2 border-white/80 bg-white/60 p-2 shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)]'
+    cardFace.appendChild(imageWindow)
+
+    const pokeImage = document.createElement("img")
+    pokeImage.className = "poke-image h-36 w-36 object-contain drop-shadow-md";
+    pokeImage.alt = pokemon.name
+    pokeImage.src = pokemon.image
+    imageWindow.appendChild(pokeImage);
+
+    // Typen als Badges, Farben aus Lennarts typeColors (gleicher Fallback wie bei ihm)
     const pokeType = document.createElement("p")
-    pokeType.className = "poke-type"
-    pokeType.textContent = pokemon.types.join(', ')
-    pokeCard.appendChild(pokeType)
+    pokeType.className = "poke-type flex flex-wrap justify-center gap-1.5"
+    pokemon.types.forEach((type) => {
+        const typeBadge = document.createElement('span')
+        typeBadge.className = `rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize shadow-sm ring-1 ring-black/10 ${typeColors[type] || 'bg-gray-200 text-gray-800'}`
+        typeBadge.textContent = type
+        pokeType.appendChild(typeBadge)
+    })
+    cardFace.appendChild(pokeType)
 
     const checkFav = JSON.parse(localStorage.getItem('pokedexFavorites')) || [];
     const isFav = checkFav.some((fav) => fav.id === pokemon.id);
@@ -189,18 +239,25 @@ function createCard(pokemon) {
         renderFavorites();
 });
 
-    favButton.className = "favourite-button";
+    favButton.className = "favourite-button mt-auto w-full cursor-pointer rounded-lg bg-slate-900 px-3 py-2 text-sm font-bold text-white shadow-md transition hover:bg-slate-700";
     favButton.textContent = favStatus
-    pokeCard.appendChild(favButton);
+    cardFace.appendChild(favButton);
+
+    // Fußzeile im Seriennummer-Stil
+    const cardFooter = document.createElement('p')
+    cardFooter.className = 'text-center font-mono text-[10px] tracking-wider text-slate-800'
+    cardFooter.textContent = 'No. ' + paddedId + ' · Pokédex Diary'
+    cardFace.appendChild(cardFooter)
+
+    // Holo-Glanz: schräger Lichtstreifen, startet links außerhalb und läuft bei Hover
+    // nach rechts raus. 150 % statt 100 %, weil die Schräge sonst unten rechts eine
+    // Ecke stehen lässt. pointer-events-none, damit der Button klickbar bleibt.
+    const holoShine = document.createElement('div')
+    holoShine.className = 'pointer-events-none absolute inset-y-0 -left-full w-1/2 -skew-x-12 bg-linear-to-r from-transparent via-white/50 to-transparent transition-all duration-700 ease-out group-hover:left-[150%]'
+    pokeCard.appendChild(holoShine)
 
     return pokeCard;
 }
-
-dummyPokemon.forEach((pokemon) => {
-
-    container.appendChild(createCard(pokemon))
-
-});
 
 
 
