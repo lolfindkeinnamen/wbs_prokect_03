@@ -41,6 +41,23 @@
 
     <!-- Your TMDB token, from the copy you made of config.example.js. It has to
          load before main.js. See "The setup" in README.md. -->
+    <div class="mx-auto flex max-w-7xl flex-col gap-6 p-6 lg:flex-row">
+      <main class="flex-1">
+      
+      <!-- Pokedexcards-->
+        <h1 class="mb-4 text-3xl font-bold text-red-600">Pokédex</h1>
+          <div id="pokemon-list"></div>
+      </main>
+        <!-- Favoriten-Bereich rechts -->
+      <aside id="favorites" class="w-full rounded-xl border-2 border-red-400 bg-gray-50 p-4 lg:sticky lg:top-6 lg:w-80 lg:self-start">
+        <h2 class="mb-3 flex items-center justify-between text-xl font-bold text-gray-800">
+          ★ Favourites
+          <span id="favorites-count" class="rounded-full bg-red-500 px-2 py-0.5 text-sm text-white">0</span>
+        </h2>
+        <p id="favorites-empty" class="hidden text-sm italic text-gray-500">No favourites yet.</p>
+        <ul id="favorites-list" class="flex max-h-[80vh] flex-col gap-3 overflow-y-auto"></ul>
+      </aside>
+    </div>
     <script src="config.js"></script>
     <script src="main.js"></script>
   </body>
