@@ -49,7 +49,12 @@ searchForm.addEventListener("submit", function(event) {
 
 
 
-// ─── FR013 · Empty and error states ──────────────────────────────────────────
+const loadMessage = document.querySelector("#load-message");
+function showLoadError (){loadMessage.textContent="Pokémon konnten nicht geladen werden.";}
+function clearLoadMessage(){loadMessage.textContent = "";}
+
+
+
 // When the films cannot be loaded — TMDB is down, the token is wrong, the wifi
 // is gone — the page says so instead of sitting empty. Same when a search finds
 // nothing.
