@@ -1,4 +1,4 @@
-// main.js — Homepage
+
 //
 // This file is yours to type. The section markers below are landmarks and
 // nothing else: they name each requirement so that the brief, your GitHub
@@ -22,9 +22,17 @@
 // ─── FR010 · Search with dialog ──────────────────────────────────────────────
 // A search bar. On submit, show the results — or a "nothing found" message — in
 // a <dialog>.
-
-
-
+const searchForm = document.querySelector("#search-form");
+const searchInput = document.querySelector("#search-input");
+const searchDialog = document.querySelector("#search-dialog");
+const searchResults = document.querySelector("#search-results");
+searchForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+  const query = searchInput.value .trim();
+  if (query === ""){searchResults.textContent ="Bitte gib einen Pokémon-Namen ein."}else {searchResults.textContent = query;}
+  console.log(query);
+  searchDialog.showModal();
+});
 
 
 // ─── FR011 · Movie cards ─────────────────────────────────────────────────────
@@ -96,8 +104,8 @@ function createCard(pokemon) {
             localStorage.setItem("pokedexFavorites", JSON.stringify(newFavEntry));
             favButton.textContent = '⭐ bereits Favorit';
         }
-
-    });
+        renderFavorites();
+});
 
     favButton.className = "favourite-button";
     favButton.textContent = favStatus
@@ -129,3 +137,147 @@ dummyPokemon.forEach((pokemon) => {
 // ─── FR014 · The favourite button knows ──────────────────────────────────────
 // A card's favourite button shows whether that film is already in the journal,
 // and flips when clicked, without the whole list being drawn again.
+const FAVORITES_KEY = 'pokedexFavorites';
+
+// ---------- localStorage Helpers ----------
+function getFavorites() {
+  try {
+    return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveFavorites(favorites) {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+}
+
+// Dummy-Daten einmalig einspielen 
+//if (!localStorage.getItem(FAVORITES_KEY)) {
+//  saveFavorites(dummyPokemon);
+//}
+
+// ---------- FR016: Notiz speichern ----------
+function saveNote(id, noteText) {
+  const favorites = getFavorites();
+  const pokemon = favorites.find((p) => p.id === id);
+  if (!pokemon) return;
+  pokemon.note = noteText.trim();
+  saveFavorites(favorites);
+}
+
+// ---------- FR017: Favorit entfernen  ----------
+function removeFavorite(id, cardElement) {
+  const favorites = getFavorites().filter((p) => p.id !== id);
+  saveFavorites(favorites);
+  cardElement.remove();          // nur die Karte aus dem DOM nehmen
+  updateFavoritesInfo(favorites.length);
+}
+
+const typeColors = {
+  electric: 'bg-yellow-300 text-yellow-900',
+  grass: 'bg-green-300 text-green-900',
+  poison: 'bg-purple-300 text-purple-900',
+  fire: 'bg-orange-300 text-orange-900',
+  water: 'bg-blue-300 text-blue-900'
+};
+
+function updateFavoritesInfo(count) {
+  document.getElementById('favorites-count').textContent = count;
+  document.getElementById('favorites-empty').classList.toggle('hidden', count > 0);
+}
+
+// ---------- Eine Favoriten-Karte  ----------
+function createFavoriteCard(pokemon) {
+  const card = document.createElement('li');
+  card.className = 'rounded-lg border border-gray-200 bg-white p-3 shadow-sm';
+
+  // Kopfzeile: Bild + Titel + Infos
+  const header = document.createElement('div');
+  header.className = 'flex items-center gap-3';
+
+  const img = document.createElement('img');
+  img.src = pokemon.image;
+  img.alt = pokemon.name;
+  img.className = 'h-16 w-16 object-contain';
+  header.appendChild(img);
+
+  const info = document.createElement('div');
+  info.className = 'flex-1';
+
+  const title = document.createElement('h3');
+  title.className = 'font-semibold text-gray-800';
+  title.textContent = pokemon.name;
+  info.appendChild(title);
+
+  const idText = document.createElement('p');
+  idText.className = 'text-xs text-gray-500';
+  idText.textContent = `#${String(pokemon.id).padStart(4, '0')}`;
+  info.appendChild(idText);
+
+  const typeList = document.createElement('div');
+  typeList.className = 'mt-1 flex flex-wrap gap-1';
+  pokemon.types.forEach((type) => {
+    const badge = document.createElement('span');
+    badge.className = `rounded-full px-2 py-0.5 text-xs font-medium ${typeColors[type] || 'bg-gray-200 text-gray-800'}`;
+    badge.textContent = type;
+    typeList.appendChild(badge);
+  });
+  info.appendChild(typeList);
+  header.appendChild(info);
+
+  // FR017: Entfernen-Button
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.className = 'rounded px-2 py-1 text-sm text-red-600 hover:bg-red-50';
+  removeBtn.textContent = '✕';
+  removeBtn.title = 'Remove from favourites';
+  removeBtn.addEventListener('click', () => removeFavorite(pokemon.id, card));
+  header.appendChild(removeBtn);
+
+  card.appendChild(header);
+
+  // FR016: Notizfeld
+  const noteArea = document.createElement('textarea');
+  noteArea.className = 'mt-3 w-full rounded border border-gray-300 p-2 text-sm focus:border-red-400 focus:outline-none';
+  noteArea.rows = 2;
+  noteArea.placeholder = 'Add a personal note...';
+  noteArea.value = pokemon.note || '';
+  card.appendChild(noteArea);
+
+  const noteFooter = document.createElement('div');
+  noteFooter.className = 'mt-1 flex items-center justify-end gap-2';
+
+  const savedMsg = document.createElement('span');
+  savedMsg.className = 'hidden text-xs text-green-600';
+  savedMsg.textContent = 'Saved!';
+  noteFooter.appendChild(savedMsg);
+
+  const saveBtn = document.createElement('button');
+  saveBtn.type = 'button';
+  saveBtn.className = 'rounded bg-red-500 px-3 py-1 text-xs font-medium text-white hover:bg-red-600';
+  saveBtn.textContent = 'Save note';
+  saveBtn.addEventListener('click', () => {
+    saveNote(pokemon.id, noteArea.value);
+    savedMsg.classList.remove('hidden');
+    setTimeout(() => savedMsg.classList.add('hidden'), 1500);
+  });
+  noteFooter.appendChild(saveBtn);
+
+  card.appendChild(noteFooter);
+  return card;
+}
+
+// ---------- FR015: Alle Favoriten anzeigen ----------
+function renderFavorites() {
+  const list = document.getElementById('favorites-list');
+  list.textContent = ''; // Liste leeren
+
+  const favorites = getFavorites();
+  favorites.forEach((pokemon) => {
+    list.appendChild(createFavoriteCard(pokemon));
+  });
+  updateFavoritesInfo(favorites.length);
+}
+
+document.addEventListener('DOMContentLoaded', renderFavorites);
