@@ -68,11 +68,43 @@ const searchForm = document.querySelector("#search-form");
 const searchInput = document.querySelector("#search-input");
 const searchDialog = document.querySelector("#search-dialog");
 const searchResults = document.querySelector("#search-results");
-searchForm.addEventListener("submit", function(event) {
+
+/**
+ * Looks up one Pokémon by its exact name.
+ * Returns a card object in the shape createCard expects,
+ * or null when the API has no Pokémon with that name (404).
+ */
+async function searchPokemonByName(name) {
+  const response = await fetch("https://pokeapi.co/api/v2/pokemon/" + encodeURIComponent(name));
+  if (response.status === 404) {
+    return null;
+  }
+  const detail = await response.json();
+  return {
+    id: detail.id,
+    image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + detail.id + ".png",
+    name: detail.name,
+    types: detail.types.map((entry) => entry.type.name),
+  };
+}
+
+searchForm.addEventListener("submit", async function(event) {
   event.preventDefault();
-  const query = searchInput.value .trim();
-  if (query === ""){searchResults.textContent ="Bitte gib einen Pokémon-Namen ein."}else {searchResults.textContent = query;}
-  console.log(query);
+  // The API only knows lowercase names, so "Pikachu" is turned into "pikachu".
+  const query = searchInput.value.trim().toLowerCase();
+  // Empty the field so the next search starts fresh instead of appending to the old name.
+  searchInput.value = "";
+  searchResults.textContent = "";
+  if (query === "") {
+    searchResults.textContent = "Bitte gib einen Pokémon-Namen ein.";
+  } else {
+    const pokemon = await searchPokemonByName(query);
+    if (pokemon === null) {
+      searchResults.textContent = "Kein Pokémon mit diesem Namen gefunden.";
+    } else {
+      searchResults.appendChild(createCard(pokemon));
+    }
+  }
   searchDialog.showModal();
 });
 
