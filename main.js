@@ -196,11 +196,7 @@ function createCard(pokemon) {
     return pokeCard;
 }
 
-dummyPokemon.forEach((pokemon) => {
 
-    container.appendChild(createCard(pokemon))
-
-});
 
 
 
