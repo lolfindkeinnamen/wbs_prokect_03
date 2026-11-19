@@ -73,6 +73,10 @@ function createCard(pokemon) {
     pokeType.textContent = pokemon.types.join(', ')
     pokeCard.appendChild(pokeType)
 
+    const checkFav = JSON.parse(localStorage.getItem('pokedexFavorites')) || [];
+    const isFav = checkFav.some((fav) => fav.id === pokemon.id);
+    let favStatus = isFav ? '⭐ bereits Favorit' : 'zu Favoriten';
+
     // ─── FR012 · Add to favourites ───────────────────────────────────────────────
     // An "add to favourites" button. The movie is stored as an object, in an array,
     // in localStorage — the Journal page reads it back out from there.
@@ -81,12 +85,22 @@ function createCard(pokemon) {
     favButton.addEventListener('click', () => {
         const favPoke = { ...pokemon, note: '' }
         const saveFavList = JSON.parse(localStorage.getItem('pokedexFavorites')) || [];
-        const newFavEntry = [favPoke, ...saveFavList];
-        localStorage.setItem("pokedexFavorites", JSON.stringify(newFavEntry));
+        const alreadyFavTest = saveFavList.some((alreadyFav) => alreadyFav.id === pokemon.id);
+        if (alreadyFavTest) {
+            const notInFavList = saveFavList.filter((fav) => fav.id !== pokemon.id);
+            localStorage.setItem("pokedexFavorites", JSON.stringify(notInFavList));
+            favButton.textContent = 'zu Favoriten';
+
+        } else {
+            const newFavEntry = [favPoke, ...saveFavList];
+            localStorage.setItem("pokedexFavorites", JSON.stringify(newFavEntry));
+            favButton.textContent = '⭐ bereits Favorit';
+        }
+
     });
 
     favButton.className = "favourite-button";
-    favButton.textContent = "Zu Favoriten"
+    favButton.textContent = favStatus
     pokeCard.appendChild(favButton);
 
     return pokeCard;
