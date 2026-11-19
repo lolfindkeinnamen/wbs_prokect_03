@@ -24,6 +24,7 @@ async function getAndShowFirstTwentyPokemon() {
 
 async function getFirstTwentyPokemon() {
     const response = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=20")
+    if (response.ok === false) {throw new Error("Laden fehlgeschlagen");}
     let result = await response.json()
     return(result)
 }
@@ -56,7 +57,7 @@ async function showPokemonCards(cards) {
 
 
 
-getAndShowFirstTwentyPokemon()
+getAndShowFirstTwentyPokemon().catch(showLoadError);
 
 
 
@@ -79,6 +80,9 @@ async function searchPokemonByName(name) {
   if (response.status === 404) {
     return null;
   }
+ if (response.ok === false) {
+  throw new Error("Laden fehlgeschlagen");
+}
   const detail = await response.json();
   return {
     id: detail.id,
@@ -98,11 +102,15 @@ searchForm.addEventListener("submit", async function(event) {
   if (query === "") {
     searchResults.textContent = "Bitte gib einen Pokémon-Namen ein.";
   } else {
-    const pokemon = await searchPokemonByName(query);
+    try {
+      const pokemon = await searchPokemonByName(query);
     if (pokemon === null) {
-      searchResults.textContent = "Kein Pokémon mit diesem Namen gefunden.";
+searchResults.textContent = "Kein Pokémon mit diesem Namen gefunden.";
     } else {
-      searchResults.appendChild(createCard(pokemon));
+  searchResults.appendChild(createCard(pokemon));
+}
+    } catch (error) {
+      searchResults.textContent = "Die Suche ist fehlgeschlagen. Bitte versuche es erneut.";
     }
   }
   searchDialog.showModal();
@@ -200,7 +208,12 @@ dummyPokemon.forEach((pokemon) => {
 
 
 
-// ─── FR013 · Empty and error states ──────────────────────────────────────────
+const loadMessage = document.querySelector("#load-message");
+function showLoadError (){loadMessage.textContent="Pokémon konnten nicht geladen werden.";}
+function clearLoadMessage(){loadMessage.textContent = "";}
+
+
+
 // When the films cannot be loaded — TMDB is down, the token is wrong, the wifi
 // is gone — the page says so instead of sitting empty. Same when a search finds
 // nothing.
